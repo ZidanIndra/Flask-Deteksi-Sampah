@@ -61,6 +61,7 @@ Halaman utama aplikasi menampilkan dua pilihan yaitu Prediksi Menggunakan Gambar
 
 
 **Prediksi Secara Realtime:**
+
 ![WhatsApp Image 2024-12-25 at 21 30 19_b3a4e06d](https://github.com/user-attachments/assets/697b63d7-0a0a-4158-bc00-7204677b0365)
 - Aplikasi ini dilengkapi dengan fitur deteksi real-time yang memungkinkan pengguna untuk langsung menggunakan kamera perangkat untuk memprediksi jenis sampah. Begitu pengguna mengaktifkan kamera, gambar yang diambil akan langsung diproses oleh model CNN, dan hasil klasifikasinya akan ditampilkan dalam waktu singkat di halaman yang sama
 ## Kontribusi
