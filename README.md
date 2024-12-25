@@ -18,8 +18,8 @@ Aplikasi ini bertujuan untuk mendeteksi jenis sampah berdasarkan gambar yang diu
 
 1. **Clone Repository:**
    ```
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone https://github.com/ZidanIndra/Flask-Deteksi-Sampah.git
+   cd Flask-Deteksi-Sampah
    ```
 
 2. **Install dependencies:**
