@@ -1,6 +1,7 @@
-tensorflow>=2.0.0
-numpy
-matplotlib
-Pillow
-h5py
-jupyterlab
+flask>=2.3.0
+werkzeug>=2.3.0
+tensorflow-cpu>=2.13.0,<=2.15.1
+numpy>=1.23.5,<2.0.0
+pillow>=9.5.0
+h5py>=3.8.0
+opencv-python-headless

@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+.env
+.venv
+venv/
+static/uploads/*.jpg
+static/uploads/*.jpeg
+static/uploads/*.png
+!static/uploads/.gitkeep

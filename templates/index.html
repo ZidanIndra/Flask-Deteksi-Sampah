@@ -1,92 +1,267 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Deteksi Sampah</title>
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        background-color: #f8f9fa;
+<html lang="id" class="h-full bg-slate-50">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoSort AI - Deteksi Sampah & Panduan Daur Ulang Cerdas</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Tailwind CSS CDN with custom config -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            eco: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            }
+          }
+        }
       }
-      .navbar-custom {
-        background-color: #9edf9c;
-      }
-      .navbar-brand img {
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
-      }
-      .hero {
-        text-align: center;
-        margin-top: 50px;
-      }
-      .hero h1 {
-        font-size: 2.5rem;
-        color: #343a40;
-      }
-      .hero p {
-        font-size: 1.2rem;
-        color: #6c757d;
-      }
-      .methods {
-        margin-top: 30px;
-      }
-      .methods a {
-        text-decoration: none;
-      }
-    </style>
-  </head>
-  <body>
-    
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light navbar-custom shadow-sm">
-      <div class="container">
-        <a class="navbar-brand" href="#">
-          <img src="{{ url_for('static', filename='img.png') }}"alt="Logo"class="img-fluid"style="width: 140px; height: 60px"/>
+    }
+  </script>
+</head>
+<body class="flex flex-col min-h-screen font-sans text-slate-800 antialiased selection:bg-eco-500 selection:text-white">
+
+  <!-- Header / Navbar -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80 transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <!-- Brand Logo -->
+      <a href="{{ url_for('index') }}" class="flex items-center gap-3 group">
+        <div class="h-11 w-11 rounded-xl bg-gradient-to-tr from-eco-600 to-emerald-400 flex items-center justify-center text-white shadow-md shadow-eco-500/20 group-hover:scale-105 transition-transform">
+          <i class="fa-solid fa-recycle text-xl"></i>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xl font-extrabold tracking-tight text-slate-900 group-hover:text-eco-600 transition-colors">
+            EcoSort<span class="text-eco-600">AI</span>
+          </span>
+          <span class="text-xs text-slate-500 font-medium -mt-1">Deteksi Sampah & Daur Ulang</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-1 bg-slate-100/80 p-1.5 rounded-full border border-slate-200/60">
+        <a href="{{ url_for('index') }}" class="px-5 py-2 text-sm font-semibold rounded-full bg-white text-eco-700 shadow-sm transition">
+          <i class="fa-solid fa-house mr-1.5 text-xs"></i> Beranda
+        </a>
+        <a href="{{ url_for('upload_image') }}" class="px-5 py-2 text-sm font-medium rounded-full text-slate-600 hover:text-slate-900 hover:bg-white/60 transition">
+          <i class="fa-solid fa-cloud-arrow-up mr-1.5 text-xs"></i> Upload Foto
+        </a>
+        <a href="{{ url_for('real_time') }}" class="px-5 py-2 text-sm font-medium rounded-full text-slate-600 hover:text-slate-900 hover:bg-white/60 transition">
+          <i class="fa-solid fa-video mr-1.5 text-xs"></i> Kamera Real-Time
+        </a>
+      </nav>
+
+      <!-- Action Button / Badge -->
+      <div class="flex items-center gap-3">
+        <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-eco-50 text-eco-700 border border-eco-200">
+          <span class="h-2 w-2 rounded-full bg-eco-500 animate-pulse"></span>
+          Model CNN 12 Kelas Siap
+        </span>
+        <a href="{{ url_for('upload_image') }}" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-eco-600 hover:bg-eco-700 text-white font-semibold text-sm shadow-sm hover:shadow-md transition">
+          <i class="fa-solid fa-magnifying-glass mr-2 text-xs"></i> Mulai Scan
         </a>
       </div>
-    </nav>
+    </div>
+  </header>
 
-    <!-- Hero Section -->
-    <div class="container hero">
-      <h1>Selamat Datang di Sistem Prediksi Sampah</h1>
-      <p>Pilih metode prediksi sampah yang sesuai:</p>
+  <!-- Main Hero Section -->
+  <main class="flex-grow">
+    <!-- Hero Banner -->
+    <section class="relative overflow-hidden pt-12 pb-20 lg:pt-16 lg:pb-28">
+      <!-- Background Ambient Glow -->
+      <div class="absolute inset-0 -z-10 flex justify-center items-center pointer-events-none">
+        <div class="w-[600px] h-[350px] bg-gradient-to-tr from-eco-200/40 via-emerald-100/30 to-transparent blur-3xl rounded-full"></div>
+      </div>
 
-      <!-- Prediction Methods -->
-      <div class="row justify-content-center methods">
-        <div class="col-md-4">
-          <div class="card shadow-sm">
-            <div class="card-body text-center">
-              <h5 class="card-title">Prediksi Menggunakan Gambar</h5>
-              <p class="card-text">Unggah gambar untuk memulai prediksi.</p>
-              <a href="{{ url_for('upload_image') }}" class="btn btn-primary"
-                >Gunakan Gambar</a
-              >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <!-- Pill Tagline -->
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100/80 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-6">
+          <i class="fa-solid fa-seedling text-emerald-600"></i>
+          Pilah Sampah dengan Kecerdasan Buatan
+        </div>
+
+        <!-- Headline -->
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight max-w-4xl mx-auto leading-tight sm:leading-tight">
+          Kenali Jenis Sampah Seketika, <span class="text-transparent bg-clip-text bg-gradient-to-r from-eco-600 to-teal-600">Selamatkan Lingkungan</span>
+        </h1>
+
+        <!-- Subheading -->
+        <p class="mt-6 text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed">
+          Unggah foto atau arahkan kamera Anda. Sistem AI CNN kami otomatis mengidentifikasi material sampah, status daur ulang, serta memberikan rekomendasi pemilahan praktis.
+        </p>
+
+        <!-- CTA Cards: 2 Main Methods -->
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
+          
+          <!-- Method 1: Upload File -->
+          <a href="{{ url_for('upload_image') }}" class="group relative p-8 bg-white rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-eco-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-eco-50 rounded-bl-full -z-0 group-hover:scale-110 transition-transform"></div>
+            <div class="relative z-10">
+              <div class="w-14 h-14 rounded-2xl bg-eco-100 text-eco-700 flex items-center justify-center text-2xl mb-6 shadow-sm group-hover:bg-eco-600 group-hover:text-white transition-colors">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+              <h2 class="text-2xl font-bold text-slate-900 group-hover:text-eco-600 transition-colors">
+                Prediksi dengan Foto
+              </h2>
+              <p class="mt-2 text-slate-600 text-sm leading-relaxed">
+                Pilih foto dari galeri atau seret & lepas berkas gambar (.jpg, .png, .webp). Cocok untuk analisis teliti dengan hasil lengkap.
+              </p>
+            </div>
+            <div class="mt-8 flex items-center text-sm font-bold text-eco-600 group-hover:translate-x-1 transition-transform">
+              Unggah Foto Sekarang <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+            </div>
+          </a>
+
+          <!-- Method 2: Real-time Camera -->
+          <a href="{{ url_for('real_time') }}" class="group relative p-8 bg-white rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-teal-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-bl-full -z-0 group-hover:scale-110 transition-transform"></div>
+            <div class="relative z-10">
+              <div class="w-14 h-14 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center text-2xl mb-6 shadow-sm group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                <i class="fa-solid fa-camera"></i>
+              </div>
+              <h2 class="text-2xl font-bold text-slate-900 group-hover:text-teal-600 transition-colors">
+                Kamera Real-Time
+              </h2>
+              <p class="mt-2 text-slate-600 text-sm leading-relaxed">
+                Arahkan langsung kamera ponsel atau laptop ke objek sampah. Nikmati pemindaian instan langsung di layar peramban Anda.
+              </p>
+            </div>
+            <div class="mt-8 flex items-center text-sm font-bold text-teal-600 group-hover:translate-x-1 transition-transform">
+              Buka Kamera Interaktif <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+            </div>
+          </a>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Supported Categories Showcase (12 Classes) -->
+    <section class="py-16 bg-white border-y border-slate-200/60">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-eco-600 mb-2">Dataset & Cakupan Klasifikasi</h2>
+          <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight">12 Kategori Sampah yang Dikenali</h3>
+          <p class="mt-3 text-slate-600 text-base">
+            Model Convolutional Neural Network kami terlatih mendeteksi berbagai material sampah rumah tangga & industri.
+          </p>
+        </div>
+
+        <!-- 12 Categories Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {% for key, cat in categories.items() %}
+          <div class="p-4 rounded-2xl bg-slate-50 hover:bg-white border border-slate-200/80 hover:border-eco-300 hover:shadow-md transition-all group flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-700 group-hover:text-eco-600 group-hover:border-eco-200 transition-colors shadow-sm">
+                  <i class="fa-solid {{ cat.icon }} text-lg"></i>
+                </div>
+                <span class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full {% if cat.is_recyclable %}bg-emerald-100 text-emerald-800{% else %}bg-rose-100 text-rose-800{% endif %}">
+                  {% if cat.is_recyclable %}Daur Ulang{% else %}Residu / B3{% endif %}
+                </span>
+              </div>
+              <h4 class="font-bold text-slate-900 text-base group-hover:text-eco-600 transition-colors">{{ cat.id_name }}</h4>
+              <p class="text-xs text-slate-500 font-medium mt-0.5">{{ cat.en_name }}</p>
+            </div>
+            
+            <div class="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between text-[11px]">
+              <span class="font-medium {% if cat.is_organic %}text-emerald-600{% else %}text-sky-600{% endif %}">
+                <i class="fa-solid {% if cat.is_organic %}fa-leaf{% else %}fa-gear{% endif %} mr-1"></i>
+                {{ cat.organic_status }}
+              </span>
+              <span class="text-slate-400 group-hover:text-eco-500 transition-colors font-mono">
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+              </span>
             </div>
           </div>
+          {% endfor %}
         </div>
-        <div class="col-md-4">
-          <div class="card shadow-sm">
-            <div class="card-body text-center">
-              <h5 class="card-title">Prediksi Real-Time</h5>
-              <p class="card-text">
-                Gunakan kamera untuk prediksi secara langsung.
-              </p>
-              <a href="{{ url_for('real_time') }}" class="btn btn-success"
-                >Real-Time Kamera</a
-              >
+      </div>
+    </section>
+
+    <!-- 3 Simple Steps Infographic -->
+    <section class="py-16 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-eco-600 mb-2">Alur Penggunaan</h2>
+          <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight">3 Langkah Mudah Memilah Sampah</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm relative text-center">
+            <div class="w-12 h-12 rounded-full bg-eco-600 text-white font-extrabold text-lg flex items-center justify-center mx-auto mb-4 shadow-md shadow-eco-500/20">
+              1
             </div>
+            <h4 class="text-lg font-bold text-slate-900 mb-2">Ambil Foto / Scan</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Foto objek sampah Anda atau gunakan kamera langsung pada peramban dengan pencahayaan yang cukup.
+            </p>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm relative text-center">
+            <div class="w-12 h-12 rounded-full bg-eco-600 text-white font-extrabold text-lg flex items-center justify-center mx-auto mb-4 shadow-md shadow-eco-500/20">
+              2
+            </div>
+            <h4 class="text-lg font-bold text-slate-900 mb-2">Analisis Otomatis AI</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Jaringan saraf tiruan CNN memproses piksel gambar dan menentukan kelas dengan skor keyakinan tinggi.
+            </p>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm relative text-center">
+            <div class="w-12 h-12 rounded-full bg-eco-600 text-white font-extrabold text-lg flex items-center justify-center mx-auto mb-4 shadow-md shadow-eco-500/20">
+              3
+            </div>
+            <h4 class="text-lg font-bold text-slate-900 mb-2">Pilah Tepat Sasaran</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Ikuti rekomendasi pemilahan: daur ulang di bank sampah, pembuatan kompos, atau pembuangan residu yang aman.
+            </p>
           </div>
         </div>
       </div>
-    </div>
+    </section>
+  </main>
 
-    <!-- Bootstrap JS and Dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-10 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="h-8 w-8 rounded-lg bg-eco-600 flex items-center justify-center text-white text-sm">
+          <i class="fa-solid fa-recycle"></i>
+        </div>
+        <p class="text-sm text-slate-500 font-medium">
+          &copy; 2024 <strong>EcoSort AI</strong>. Sistem Deteksi Sampah Cerdas berbasis CNN & Flask.
+        </p>
+      </div>
+      <div class="flex items-center gap-6 text-sm text-slate-500">
+        <a href="{{ url_for('upload_image') }}" class="hover:text-eco-600 transition">Upload Foto</a>
+        <a href="{{ url_for('real_time') }}" class="hover:text-eco-600 transition">Kamera Real-Time</a>
+        <a href="https://huggingface.co" target="_blank" class="hover:text-eco-600 transition flex items-center gap-1">
+          <span>Hugging Face Space</span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+</body>
 </html>
