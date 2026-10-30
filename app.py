@@ -222,7 +222,8 @@ def check_human_face(pil_img):
             top_lum = np.mean(top_slice)
             mid_lum = np.mean(np_rgb[top_h:int(h * 0.70), :])
 
-            if (skin_ratio > 0.18 and dark_hair > 0.05 and (mid_lum - top_lum) > 15) or (skin_ratio > 0.38):
+            # Kombinasi rona kulit dengan kontur rambut gelap di bagian atas dan kontras dahi
+            if (skin_ratio > 0.18 and dark_hair > 0.06 and (mid_lum - top_lum) > 20):
                 return True
     except Exception:
         pass
