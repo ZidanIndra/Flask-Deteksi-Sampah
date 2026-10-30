@@ -191,18 +191,39 @@ def validate_waste_image(pil_img):
     return True, None
 
 def check_human_face(pil_img):
-    """Deteksi wajah manusia menggunakan Haar Cascade agar tidak dianggap sampah"""
+    """Deteksi wajah manusia menggunakan Haar Cascade dan analisis biometrik kulit/rambut"""
     try:
+        np_rgb = np.array(pil_img.convert('RGB'))
+        h, w, _ = np_rgb.shape
+
+        # 1. Haar Cascade Frontal & Profile Face Detection
         if cv2 is not None and hasattr(cv2, 'data') and hasattr(cv2.data, 'haarcascades'):
-            cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-            if os.path.exists(cascade_path):
-                face_cascade = cv2.CascadeClassifier(cascade_path)
-                if not face_cascade.empty():
-                    np_rgb = np.array(pil_img.convert('RGB'))
-                    np_gray = cv2.cvtColor(np_rgb, cv2.COLOR_RGB2GRAY)
-                    faces = face_cascade.detectMultiScale(np_gray, scaleFactor=1.15, minNeighbors=4, minSize=(30, 30))
-                    if len(faces) > 0:
-                        return True
+            np_gray = cv2.cvtColor(np_rgb, cv2.COLOR_RGB2GRAY)
+            for cascade_name in ['haarcascade_frontalface_default.xml', 'haarcascade_profileface.xml']:
+                p = os.path.join(cv2.data.haarcascades, cascade_name)
+                if os.path.exists(p):
+                    casc = cv2.CascadeClassifier(p)
+                    if not casc.empty():
+                        detected = casc.detectMultiScale(np_gray, scaleFactor=1.1, minNeighbors=3, minSize=(30, 30))
+                        if len(detected) > 0:
+                            return True
+
+        # 2. Analisis Biometrik Kulit (YCbCr) & Rambut
+        if cv2 is not None:
+            ycrcb = cv2.cvtColor(np_rgb, cv2.COLOR_RGB2YCrCb)
+            lower_skin = np.array([0, 133, 77], dtype=np.uint8)
+            upper_skin = np.array([255, 173, 127], dtype=np.uint8)
+            skin_mask = cv2.inRange(ycrcb, lower_skin, upper_skin)
+            skin_ratio = np.count_nonzero(skin_mask) / (h * w)
+
+            top_h = max(1, int(h * 0.35))
+            top_slice = np_rgb[:top_h, :]
+            dark_hair = np.count_nonzero(np.all(top_slice < 60, axis=-1)) / (top_h * w)
+            top_lum = np.mean(top_slice)
+            mid_lum = np.mean(np_rgb[top_h:int(h * 0.70), :])
+
+            if (skin_ratio > 0.18 and dark_hair > 0.05 and (mid_lum - top_lum) > 15) or (skin_ratio > 0.38):
+                return True
     except Exception:
         pass
     return False
